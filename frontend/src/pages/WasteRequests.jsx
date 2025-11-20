@@ -11,15 +11,21 @@ export default function WasteRequests() {
     pickup_address: "",
   });
 
+  // Load user requests
   const loadRequests = async () => {
-    const res = await API.get("/waste/my-requests");
-    setRequests(res.data);
+    try {
+      const res = await API.get("/waste/my-requests");
+      setRequests(res.data);
+    } catch (err) {
+      console.error("Failed to load requests:", err);
+    }
   };
 
   useEffect(() => {
     loadRequests();
   }, []);
 
+  // Submit request
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -34,9 +40,21 @@ export default function WasteRequests() {
     }
   };
 
-  return (
-    <div className="max-w-5xl mx-auto mt-12 mb-20">
+  // Delete a request
+  const deleteRequest = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this request?")) return;
 
+    try {
+      await API.delete(`/waste/${id}`);
+      alert("Request deleted");
+      loadRequests();
+    } catch (err) {
+      alert("Delete failed — only admins or request owners can delete.");
+    }
+  };
+
+  return (
+    <div className="max-w-5xl mx-auto mt-12 mb-20 px-4">
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -45,7 +63,7 @@ export default function WasteRequests() {
         Waste Collection Requests
       </motion.h1>
 
-      {/* Form Card */}
+      {/* Form Section */}
       <motion.form
         onSubmit={handleSubmit}
         initial={{ opacity: 0 }}
@@ -60,6 +78,7 @@ export default function WasteRequests() {
             className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-green-500"
             value={form.waste_type}
             onChange={(e) => setForm({ ...form, waste_type: e.target.value })}
+            required
           />
         </div>
 
@@ -71,6 +90,7 @@ export default function WasteRequests() {
             className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-green-500"
             value={form.quantity}
             onChange={(e) => setForm({ ...form, quantity: e.target.value })}
+            required
           />
         </div>
 
@@ -84,6 +104,7 @@ export default function WasteRequests() {
             onChange={(e) =>
               setForm({ ...form, pickup_address: e.target.value })
             }
+            required
           />
         </div>
 
@@ -92,23 +113,36 @@ export default function WasteRequests() {
         </button>
       </motion.form>
 
-      {/* Requests List */}
+      {/* My Requests */}
       <h2 className="text-2xl font-semibold mb-5 text-gray-800">My Requests</h2>
+
+      {requests.length === 0 && (
+        <p className="text-gray-500">You have no waste requests yet.</p>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {requests.map((r) => (
           <motion.div
-            key={r.request_id}
+            key={r._id}
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white border shadow rounded-xl p-6"
+            className="bg-white border shadow rounded-xl p-6 relative"
           >
+            {/* Delete Button */}
+            <button
+              onClick={() => deleteRequest(r._id)}
+              className="absolute top-4 right-4 text-red-600 hover:text-red-800"
+            >
+              <FaTrash />
+            </button>
+
             <div className="flex items-center gap-3 mb-3">
-              <FaTrash className="text-green-700 text-xl" />
               <h3 className="text-lg font-bold text-gray-800">{r.waste_type}</h3>
             </div>
 
-            <p className="text-gray-700"><b>Quantity:</b> {r.quantity} kg</p>
+            <p className="text-gray-700">
+              <b>Quantity:</b> {r.quantity} kg
+            </p>
 
             <p className="flex items-center gap-2 mt-2 text-gray-700">
               <FaMapMarkerAlt className="text-green-600" />

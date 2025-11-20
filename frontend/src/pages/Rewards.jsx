@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FaGift } from "react-icons/fa";
+import { FaGift, FaMedal } from "react-icons/fa";
 import api from "../services/api";
 
 export default function Rewards() {
   const [rewards, setRewards] = useState([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -12,6 +13,7 @@ export default function Rewards() {
       try {
         const res = await api.get("/rewards/my-points");
         setRewards(res.data);
+        setTotal(res.data.reduce((sum, r) => sum + r.points, 0));
       } catch (err) {
         console.error("Error loading rewards:", err);
       } finally {
@@ -34,6 +36,26 @@ export default function Rewards() {
         <FaGift className="text-green-600" /> My Rewards
       </h1>
 
+      {/* Total Points */}
+      <div className="bg-white p-6 rounded-xl shadow mb-6 border-l-4 border-green-600">
+        <h2 className="text-xl font-semibold">Total Points Earned</h2>
+        <p className="text-5xl font-bold text-green-700">{total}</p>
+      </div>
+
+      {/* Leaderboard */}
+      <h2 className="text-2xl font-semibold mb-3 flex gap-2 items-center">
+        <FaMedal className="text-yellow-500" /> Your Achievements
+      </h2>
+      <div className="bg-white p-6 rounded-xl shadow mb-8">
+        <ul className="space-y-3">
+          <li>🏅 Bronze Recycler – 100 pts</li>
+          <li>🥈 Silver Recycler – 300 pts</li>
+          <li>🥇 Gold Recycler – 600 pts</li>
+          <li>💎 Eco Champion – 1000 pts</li>
+        </ul>
+      </div>
+
+      {/* Reward History */}
       {rewards.length > 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
@@ -45,21 +67,16 @@ export default function Rewards() {
               key={i}
               className="bg-white shadow-md p-4 rounded-xl border-l-4 border-green-600"
             >
-              <h3 className="text-lg font-semibold text-green-700">
-                {reward.description}
-              </h3>
-              <p className="text-gray-600 text-sm">
-                {new Date(reward.date).toLocaleDateString()}
-              </p>
-              <p className="text-green-700 font-bold text-xl mt-2">
-                +{reward.points} pts
-              </p>
+              <h3 className="text-lg font-semibold text-green-700">{reward.description}</h3>
+              <p className="text-gray-600 text-sm">{new Date(reward.date).toLocaleDateString()}</p>
+              <p className="text-green-700 font-bold text-2xl mt-2">+{reward.points} pts</p>
             </div>
           ))}
         </motion.div>
       ) : (
-        <p className="text-gray-500 text-sm">You don’t have any rewards yet.</p>
+        <p className="text-gray-500">You don’t have any rewards yet.</p>
       )}
     </div>
   );
 }
+    

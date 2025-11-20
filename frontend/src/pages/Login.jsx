@@ -6,28 +6,28 @@ export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
-  // Redirect logged-in users
+  // Redirect logged-in users automatically
   useEffect(() => {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
     if (token) {
-      if (role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/dashboard");
-      }
+      if (role === "admin") navigate("/admin");
+      else navigate("/dashboard");
     }
   }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const res = await api.post("/auth/login", form);
 
-      // Save token + role
+      // Save everything needed for dashboard
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.user.role);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("userId", res.data.user._id); // 🔥 THIS FIXES THE /null ERROR
 
       // Redirect based on role
       if (res.data.user.role === "admin") {
@@ -37,7 +37,7 @@ export default function Login() {
       }
 
     } catch (err) {
-      alert(err.response?.data?.error || "Login failed");
+      alert(err.response?.data?.message || "Login failed");
     }
   };
 
@@ -75,7 +75,7 @@ export default function Login() {
         </button>
 
         <p className="text-sm text-center mt-4">
-          Don't have an account?{" "}
+          Don’t have an account?{" "}
           <span
             onClick={() => navigate("/register")}
             className="text-green-700 cursor-pointer hover:underline"
