@@ -1,134 +1,200 @@
-# SmartWaste — Final Project
+# Final Project -- Smart Waste Management System
 
-A full-stack waste management application: React (Vite) frontend and Node/Express + MongoDB backend. This README describes the code in this workspace, how to run it, environment variables, API endpoints, and the project structure.
+## Overview
 
-## Quick summary
-- Backend: Express + Mongoose — auth (JWT), waste requests, payments (mock M-Pesa), reports, dashboard.
-- Frontend: React + Vite + Tailwind — user and admin UI, protected routes.
-- DB: MongoDB (Mongoose models).
+This project is a **MERN (MongoDB, Express, React, Node.js) Smart Waste
+Management System** designed to allow users to: - Register & log in\
+- Create waste collection requests\
+- Track request status\
+- View assigned waste collectors\
+- Manage roles (Admin & User)
 
-## Key features
-- User registration, login, profile
-- Create/view/delete waste collection requests
-- Mock M-Pesa payment flow and webhook handling
-- Admin reports and dashboards
-- Rewards system and bin management
+Both the **frontend** and **backend** are deployed: - Backend (Render):\
+- Frontend (Vercel):
 
-## Project structure
-- backend/
-  - server.js
-  - package.json
-  - .env (local, not committed)
-  - config/
-    - db.js
-  - controllers/
-    - authController.js
-    - wasteController.js
-    - paymentsController.js
-    - reportsController.js
-  - routes/
-    - auth.js
-    - waste.js
-    - payments.js
-    - reports.js
-    - dashboard.js
-  - middleware/
-    - auth.js
-    - authMiddleware.js
-  - models/
-    - User.js
-    - WasteRequest.js
-    - Payment.js
-    - Report.js
-    - Reward.js
-    - Bin.js
+------------------------------------------------------------------------
 
-- frontend/
-  - package.json
-  - vite.config.js
-  - .env (VITE_API_URL)
-  - src/
-    - main.jsx
-    - App.jsx
-    - services/
-      - api.js
-    - pages/
-      - Login.jsx
-      - register.jsx
-      - Dashboard.jsx
-      - WasteRequests.jsx
-      - Payments.jsx
-      - Rewards.jsx
-      - Reports.jsx
-    - components/
-      - ProtectedRoute.jsx
-      - AdminRoute.jsx
-      - Navbar.jsx
-      - Footer.jsx
-    - admin/
-      - AdminLayout.jsx
-      - pages/
-        - ManageRequests.jsx
-        - ManageUsers.jsx
+## Project Structure
 
-- README.md (this file)
-- .gitignore
+    Final-project/
+    │
+    ├── backend/
+    │   ├── controllers/
+    │   ├── middleware/
+    │   ├── models/
+    │   ├── routes/
+    │   ├── server.js
+    │   ├── package.json
+    │   └── .env
+    │
+    └── frontend/
+        ├── src/
+        │   ├── components/
+        │   ├── pages/
+        │   ├── context/
+        │   ├── App.jsx
+        │   └── main.jsx
+        ├── vite.config.js
+        ├── package.json
+        └── .env
 
-## Install & run (Windows / PowerShell)
-1. Open PowerShell in the workspace:
-   Set-Location "Final-project"
+------------------------------------------------------------------------
 
-2. Backend
-   cd backend
-   npm install
-   # create backend/.env 
-   npm run dev
+## Backend (Node.js + Express)
 
-3. Frontend 
-   cd .\frontend
-   npm install
-   npm run dev
+### Features
 
-Default dev servers:
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:5000/api
+-   User authentication (JWT)
+-   Admin & User authorization middleware
+-   Waste request CRUD operations
+-   MongoDB database integration
+-   Environment variables via dotenv
 
-## Example .env
-- backend/.env
-  - MONGO_URI=mongodb://127.0.0.1:27017/smartwaste
-  - JWT_SECRET=change_this_secret
-  - PORT=5000
-- frontend/.env
-  - VITE_API_URL=http://localhost:5000/api
+### Backend .env structure
 
-## Important API endpoints (prefix: /api)
-- Auth
-  - POST /api/auth/register
-  - POST /api/auth/login
-  - GET /api/auth/me
-- Waste
-  - POST /api/waste/request
-  - GET /api/waste/my-requests
-  - DELETE /api/waste/:id
-- Payments
-  - POST /api/payments/mpesa/initiate
-  - POST /api/payments/mpesa/callback
-  - GET /api/payments/user/:id
-- Reports
-  - POST /api/reports/generate
-  - GET /api/reports
-- Dashboard
-  - GET /api/dashboard
+    PORT=5000
+    MONGO_URI=your_mongo_uri
+    JWT_SECRET=your_secret
 
-Refer to backend/routes/*.js and controllers/* for request/response shapes.
+### Install Dependencies
 
-## Notes & troubleshooting
-- 401/403: ensure frontend stores token in localStorage and backend JWT_SECRET matches.
-- DB errors: verify MONGO_URI and MongoDB service.
-- Ports: change VITE_API_URL if backend runs on a different port.
+    cd backend
+    npm install
 
-## Scripts
-- Backend: npm run dev (nodemon), npm start
-- Frontend: npm run dev, npm run build, npm run preview
+### Run Development Server
+
+    npm run dev
+
+------------------------------------------------------------------------
+
+## Frontend (React + Vite)
+
+### Features
+
+-   Login & Register UI
+-   Dashboard for waste requests
+-   Forms for submitting new requests
+-   API context management
+-   Protected routes
+-   Beautiful UI with CSS
+
+### Frontend .env file
+
+    VITE_API_URL=http://localhost:5000/api
+
+### Install Dependencies
+
+    cd frontend
+    npm install
+
+### Run Frontend
+
+    npm run dev
+
+------------------------------------------------------------------------
+
+## API Endpoints Summary
+
+### Auth Routes
+
+  Method   Endpoint               Description
+  -------- ---------------------- ---------------------
+  POST     `/api/auth/register`   Register a new user
+  POST     `/api/auth/login`      Login and get JWT
+
+### Waste Request Routes
+
+  Method   Endpoint                  Description
+  -------- ------------------------- -------------------------------
+  POST     `/api/waste`              Create request
+  GET      `/api/waste`              Get all requests (Admin Only)
+  GET      `/api/waste/user`         Get user's requests
+  PUT      `/api/waste/:id/status`   Update request status
+  GET      `/api/waste/:id`          Get request details
+
+------------------------------------------------------------------------
+
+## Role-Based Access
+
+### User
+
+-   Can create requests\
+-   View their own requests
+
+### Admin
+
+-   View all requests\
+-   Update request statuses
+
+------------------------------------------------------------------------
+
+## Deployment Setup
+
+### Render (Backend)
+
+-   Add Environment Variables\
+-   Use `npm start` in start command\
+-   Add build command (none required)
+
+### Vercel (Frontend)
+
+-   Add `VITE_API_URL="https://yourbackend.onrender.com/api"`\
+-   Deploy automatically from GitHub
+
+------------------------------------------------------------------------
+
+## Common Errors & Fixes
+
+### **Error:** 500 -- Secret key missing
+
+Fix: Add this to backend `.env`:
+
+    JWT_SECRET=yourstrongsecretkey123
+
+### **Error:** CORS blocking requests
+
+Fix already implemented in backend using:
+
+    app.use(cors());
+
+### **Error:** 400 Bad Request
+
+Usually caused by missing request body fields. Ensure the frontend
+sends:
+
+    { email, password }
+
+------------------------------------------------------------------------
+
+## Running Full Project Locally
+
+1.  Start backend
+
+        cd backend
+        npm run dev
+
+2.  Start frontend
+
+        cd frontend
+        npm run dev
+
+3.  Ensure `VITE_API_URL=http://localhost:5000/api`
+
+------------------------------------------------------------------------
+
+## Final Notes
+
+-   Keep `.env` files out of GitHub\
+-   Always update API URLs correctly when switching between localhost
+    and production\
+-   Ensure MongoDB Atlas IP whitelist includes `0.0.0.0/0`
+
+------------------------------------------------------------------------
+
+## Author
+
+**Eunice Wambui**\
+Smart Waste MERN Project
+
+
 https://final-project-8.vercel.app/dashboard
-
