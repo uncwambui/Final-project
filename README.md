@@ -130,4 +130,5 @@ Refer to backend/routes/*.js and controllers/* for request/response shapes.
 ## Scripts
 - Backend: npm run dev (nodemon), npm start
 - Frontend: npm run dev, npm run build, npm run preview
+https://final-project-8.vercel.app/dashboard
 

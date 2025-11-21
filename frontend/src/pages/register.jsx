@@ -24,7 +24,7 @@ const handleSubmit = async (e) => {
       alert("Registration successful! You can now log in.");
       navigate("/login");
     } else {
-      alert(data.message || "Registration failed");
+      alert(data.error || data.message || "Registration failed");
     }
   } catch (err) {
     console.error(err);
