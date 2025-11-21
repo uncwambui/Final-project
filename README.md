@@ -197,4 +197,4 @@ sends:
 Smart Waste MERN Project
 
 
-https://final-project-8.vercel.app/dashboard
+https://final-project-8.vercel.app/
